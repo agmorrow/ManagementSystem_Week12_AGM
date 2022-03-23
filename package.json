@@ -1,0 +1,26 @@
+{
+  "name": "week_12_agm",
+  "version": "1.0.0",
+  "description": "## Your Task",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agmorrow/ManagementSystem_Week12_AGM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agmorrow/ManagementSystem_Week12_AGM/issues"
+  },
+  "homepage": "https://github.com/agmorrow/ManagementSystem_Week12_AGM#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "express": "^4.17.3",
+    "inquirer": "^8.2.1",
+    "mysql2": "^2.3.3"
+  }
+}
