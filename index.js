@@ -77,7 +77,7 @@ const viewDepartments = async () => {
 };
 
 const viewRoles = async () => {
-  let query = 'SELECT * from role'
+  let query = 'SELECT * FROM role'
   dbData.query(query, function(err, res) {
     if (err) {
       console.log(err);
@@ -88,6 +88,9 @@ const viewRoles = async () => {
     init();
   });
 };
+
+
+
 
 const viewEmployees = async () => {
   let query = 'SELECT * FROM employee'
@@ -125,10 +128,67 @@ init();
 
 
 
-const addRole = async () => {
-  try {
-  let department = await dbData.query("SELECT");
-  let answer = await inquirer.prompt([
+// const addRole = async () => {
+//   try {
+//   const department = await dbData.query(`SELECT name FROM department;`);
+//   const answer = await inquirer.prompt([
+//     {
+//       type: "input",
+//       name: "role",
+//       message: "What is the name of the role?",
+//       validate: answer => {
+//         if (answer !== "") {
+//           return true;
+//         }
+//         console.log("Please enter the name of the role.");
+//         return false;
+//       }
+//   },
+//   {
+//     type: "input",    
+//     name: "salary",
+//     message: "What is the salary of the role?",
+//     validate: answer => {
+//       if (answer !== "") {
+//         return true;
+//       }
+//       console.log("Please enter the salary for that role.");
+//       return false;
+//     }
+//   },
+//   {
+//     type: "input",
+//     name: "roleDepartment",
+//     message: "What department does that role belong to?",
+//     validate: answer => {
+//       if (answer !== "") {
+//         return true;
+//       }
+//       console.log("Please enter the department for this role.");
+//       return false;
+//     }
+//   }
+// ])
+// let chosenDept;
+// for (i = 0; i < department.length; i++) {
+//   if(department[i].department_id === answer.choice) {
+//     chosenDept = department[i];
+//   };
+// }
+// let result = await dbData.query(`INSERT INTO role(title, salary, department_id) VALUES (?,?,?);`, {
+//   title: answer.title,
+//   salary: answer.salary,
+//   department_id: answer.deptId
+// })
+// } catch (err) {
+//   console.error(err);
+//   init();
+//   };
+// };
+
+
+const addRole = async() => {
+  const result = await inquirer.prompt([
     {
       type: "input",
       name: "role",
@@ -166,23 +226,21 @@ const addRole = async () => {
     }
   }
 ])
-let chosenDept;
-for (i = 0; i < department.length; i++) {
-  if(department[i].department_id === answer.choice) {
-    chosenDept = department[i];
-  };
-}
-let result = await dbData.query(`INSERT INTO role (title, salary, department_id)
-VALUES (?,?,?)`, {
-  title: answer.title,
-  salary: answer.salary,
-  department_id: answer.deptId
-})
-} catch (err) {
-  console.error(err);
+  const sql = `INSERT INTO role (title, salary, department_id)
+  VALUES (?,?,?)`;
+  const params = [result.role, result.salary, result.department];
+
+  dbData.query(sql, params, function (err, results) {
+    console.log("");
+    console.table(results);
+  });
+  console.log(`${result.role} role added successfully.\n`)
   init();
-  };
-};
+}
+
+
+
+
 
 const addEmployee = async() => {
   try {
