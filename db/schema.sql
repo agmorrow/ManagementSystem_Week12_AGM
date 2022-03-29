@@ -12,10 +12,10 @@ PRIMARY KEY(id)
 CREATE TABLE role (
 id INT NOT NULL AUTO_INCREMENT,
 title VARCHAR(30) NOT NULL,
+department INT,
 salary DECIMAL,
-department_id INT,
 PRIMARY KEY(id)
-FOREIGN KEY(department_id) REFERENCES department(id)
+FOREIGN KEY(department) REFERENCES department(id)
 );
 
 CREATE TABLE employee (
