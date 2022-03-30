@@ -10,9 +10,12 @@ I was given a task to build a command-line application from scratch to manage a 
 - [License](#license)
 
 ## Installation
-- Make sure node.js is downloaded:
+- Make sure node.js and MySQL are installed:
 ```bash
 https://nodejs.org/en/download/
+
+npm i msql2
+** It is also important to have a SQL GUI installed and match the config folder to the users SQL connection information. Users can run the seeds.sql file to pre-populate the data.
 ```
 - Make sure you install node_modules to your file
 ```bash
