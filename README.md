@@ -29,7 +29,7 @@ node index.js
 
 ### Walk through video
 
-<a href="#" target="_blank">Walk through video</a>
+<a href="https://youtu.be/dnaRM05Z6Qw" target="_blank">Walk through video</a>
 
 ### Screenshots
 

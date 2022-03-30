@@ -28,6 +28,7 @@ const init = async () => {
         "Add a role",
         "Add an employee",
         "Update an employee role",
+        "Update an employees manager",
         "Quit",
       ]
     });
@@ -52,6 +53,9 @@ const init = async () => {
         break;
       case 'Update an employee role':
         updateEmployeeRole();
+        break;
+      case 'Update an employees manager':
+          updateEmployeeManager();
         break;
       case 'Quit':
         process.exit(1);
@@ -84,7 +88,7 @@ const init = async () => {
 const viewRoles = async () => {
   console.log('View roles');
   try {
-    let query = 'SELECT * FROM role';
+    let query = 'SELECT * FROM role LEFT JOIN department ON role.department_id = department.id';
     connection.query(query, function (err, res) {
       if (err) throw err;
       let roleArray = [];
@@ -102,7 +106,7 @@ const viewRoles = async () => {
 const viewEmployees = async () => {
   console.log('View employees');
   try {
-    let query = 'SELECT * FROM employee';
+    let query = 'SELECT * FROM employee LEFT JOIN role ON employee.role_id = role.id';
     connection.query(query, function (err, res) {
       if (err) throw err;
       let employeeArray = [];
@@ -143,9 +147,9 @@ const addDepartment = async () => {
 // Adding a new role function
 const addRole = async () => {
   try {
-    console.log('Role Add');
+    console.log('Add Role');
 
-    let departments = await connection.query("SELECT * FROM department")
+    let departments = await connection.query("SELECT role.id, title, salary FROM role LEFT JOIN department ON role.department_id = department.id")
 
     let answer = await inquirer.prompt([{
         type: 'input',
@@ -160,13 +164,13 @@ const addRole = async () => {
       {
         type: 'list',
         name: 'departmentId',
+        message: 'Which department does this role belong to?',
         choices: departments.map((departmentId) => {
           return {
             name: departmentId.name,
             value: departmentId.id
           }
         }),
-        message: 'Which department does this role belong to?',
       }
     ]);
 
@@ -213,19 +217,25 @@ const addEmployee = async () => {
       {
         type: 'list',
         name: 'employeeRoleId',
+        message: "What is this Employee's role id?",
         choices: roles.map((role) => {
           return {
             name: role.title,
             value: role.id
           }
         }),
-        message: "What is this Employee's role id?"
       },
       {
-        type: 'input',
         name: 'employeeManagerId',
-        message: "Who is the employees manager?"
-      }
+        type: 'list',
+        message: "What is this Employee's Manager's Id?",
+        choices: managers.map((manager) => {
+            return {
+                name: manager.first_name + " " + manager.last_name,
+                value: manager.id
+            }
+        }),
+    }
     ])
 
     let result = await connection.query("INSERT INTO employee SET ?", {
@@ -254,13 +264,13 @@ const updateEmployeeRole = async () => {
     let employeeSelection = await inquirer.prompt([{
       type: 'list',
       name: 'employee',
+      message: 'Which employee do you want to update?',
       choices: employees.map((employeeName) => {
         return {
           name: employeeName.first_name + " " + employeeName.last_name,
           value: employeeName.id
         }
       }),
-      message: 'Which employee do you want to update?'
     }]);
 
     let roles = await connection.query("SELECT * FROM role");
@@ -268,13 +278,13 @@ const updateEmployeeRole = async () => {
     let roleSelection = await inquirer.prompt([{
       type: 'list',
       name: 'role',
+      message: 'Please select the role to update the employee with.',
       choices: roles.map((roleName) => {
         return {
           name: roleName.title,
           value: roleName.id
         }
       }),
-      message: 'Please select the role to update the employee with.'
     }]);
 
     let result = await connection.query("UPDATE employee SET ? WHERE ?", [{
@@ -284,6 +294,55 @@ const updateEmployeeRole = async () => {
     }]);
 
     console.log(`The role was successfully updated.\n`);
+    init();
+
+  } catch (err) {
+    console.log(err);
+    init();
+  };
+}
+
+
+// Update an employee role function
+const updateEmployeeManager = async () => {
+  try {
+    console.log('Updating employee role');
+
+    let employees = await connection.query("SELECT * FROM employee");
+
+    let employeeSelection = await inquirer.prompt([{
+      type: 'list',
+      name: 'employee',
+      message: 'Which employee do you want to update?',
+      choices: employees.map((employeeName) => {
+        return {
+          name: employeeName.first_name + " " + employeeName.last_name,
+          value: employeeName.id
+        }
+      }),
+    }]);
+
+    let managers = await connection.query("SELECT * FROM employee");
+
+    let managerSelection = await inquirer.prompt([{
+      type: 'list',
+      name: 'role',
+      message: 'Please select the manager to update the employee with.',
+      choices: managers.map((manager) => {
+        return {
+            name: manager.first_name + " " + manager.last_name,
+            value: manager.id
+        }
+    }),
+    }]);
+
+    let result = await connection.query("UPDATE employee SET ? WHERE ?", [{
+      manager_id: managerSelection.role
+    }, {
+      id: employeeSelection.employee
+    }]);
+
+    console.log(`The manager was successfully updated.\n`);
     init();
 
   } catch (err) {
